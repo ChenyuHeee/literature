@@ -1,0 +1,28 @@
+{
+  "site": {
+    "title": "草木留声",
+    "subtitle": "小说 · 诗文"
+  },
+  "works": [
+    {
+      "id": "jiuge-canjian",
+      "title": "九歌残剑录",
+      "subtitle": "初定版",
+      "category": "novel",
+      "path": "novel/九歌残剑录/初定版/index.md",
+      "excerpt": "残阳如血，泼洒在郢都斑驳的城堞与鳞次栉比的屋瓦之上，将这古老的楚都浸染得一片凄艳。",
+      "updated": "2026-04",
+      "tags": ["玄幻", "历史", "武侠"]
+    },
+    {
+      "id": "rain-poem",
+      "title": "雨中",
+      "subtitle": "",
+      "category": "poems",
+      "path": "poems/draft/20260422.md",
+      "excerpt": "雨中撑伞蹲在河边的人，她有怎样的故事",
+      "updated": "2026-04-22",
+      "tags": ["散文诗"]
+    }
+  ]
+}

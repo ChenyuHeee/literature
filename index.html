@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>草木留声</title>
+  <meta name="description" content="小说 · 诗文 — 草木留声" />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;700&family=Noto+Sans+SC:wght@300;400;500&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="container">
+      <h1 class="site-title">草木留声</h1>
+      <p class="site-subtitle">小说 · 诗文</p>
+    </div>
+    <button class="theme-toggle" id="themeToggle" aria-label="切换主题">
+      <span class="theme-icon theme-icon-moon">🌙</span>
+      <span class="theme-icon theme-icon-sun">☀️</span>
+    </button>
+  </header>
+
+  <main class="site-main">
+    <div class="container">
+
+      <!-- 继续阅读 -->
+      <div id="continueReading" class="continue-reading" style="display:none">
+        <span class="continue-icon">📖</span>
+        <div class="continue-text">
+          <div class="continue-title" id="continueTitle"></div>
+          <div class="continue-hint">继续上次阅读</div>
+        </div>
+        <span class="continue-arrow">→</span>
+      </div>
+
+      <!-- 分类筛选 -->
+      <nav class="category-nav" aria-label="分类">
+        <button class="cat-btn active" data-cat="all">全部</button>
+        <button class="cat-btn" data-cat="novel">小说</button>
+        <button class="cat-btn" data-cat="poems">诗文</button>
+      </nav>
+
+      <!-- 作品列表 -->
+      <div class="works-grid" id="worksGrid" role="list">
+        <div class="skeleton-card"></div>
+        <div class="skeleton-card"></div>
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>© 2026 草木留声 &nbsp;·&nbsp; <a href="https://github.com" id="repoLink" target="_blank" rel="noopener" style="color:inherit;text-decoration:none;">GitHub</a></p>
+    </div>
+  </footer>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
