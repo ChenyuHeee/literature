@@ -243,6 +243,9 @@
         // 还原阅读位置（等待图片等加载后）
         requestAnimationFrame(() => setTimeout(restorePosition, 80));
         updateProgress();
+
+        // 挂载评论系统（Giscus）
+        if (window.mountGiscus) window.mountGiscus();
       })
       .catch(err => {
         showError(`无法加载文件「${contentPath}」。<br><small>${err.message}</small>`);
