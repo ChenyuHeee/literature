@@ -22,6 +22,16 @@
     </a>
     <div class="reader-title" id="readerTitle">加载中…</div>
     <div class="reader-controls">
+      <button class="ctrl-btn" id="tocToggle" title="目录" aria-label="打开目录" aria-expanded="false">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+          <rect x="0" y="2" width="6" height="1.5" rx="0.75"/>
+          <rect x="8" y="2" width="8" height="1.5" rx="0.75"/>
+          <rect x="0" y="7" width="6" height="1.5" rx="0.75"/>
+          <rect x="8" y="7" width="8" height="1.5" rx="0.75"/>
+          <rect x="0" y="12" width="6" height="1.5" rx="0.75"/>
+          <rect x="8" y="12" width="8" height="1.5" rx="0.75"/>
+        </svg>
+      </button>
       <button class="ctrl-btn" id="fontDecrease" title="缩小字体" aria-label="缩小字体">A-</button>
       <button class="ctrl-btn" id="fontIncrease" title="放大字体" aria-label="放大字体">A+</button>
       <button class="ctrl-btn" id="themeToggle" title="切换主题" aria-label="切换主题">
@@ -31,8 +41,20 @@
     </div>
   </header>
 
+  <!-- 目录遮罩（移动端） -->
+  <div class="toc-overlay" id="tocOverlay" aria-hidden="true"></div>
+
+  <!-- 目录抽屉 -->
+  <aside class="toc-panel" id="tocPanel" aria-label="目录" aria-hidden="true">
+    <div class="toc-header">
+      <span class="toc-heading-label">目录</span>
+      <button class="toc-close" id="tocClose" aria-label="关闭目录">✕</button>
+    </div>
+    <nav class="toc-nav" id="tocNav"></nav>
+  </aside>
+
   <!-- 阅读区域 -->
-  <main class="reader-main">
+  <main class="reader-main" id="readerMain">
     <article class="reader-content" id="readerContent">
       <div class="reader-loading" id="readerLoading">
         <div class="loading-dots">

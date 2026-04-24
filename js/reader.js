@@ -63,6 +63,110 @@
     progressBar.setAttribute('aria-valuenow', Math.round(pct));
   }
 
+  /* === 目录面板 === */
+  const tocPanel   = document.getElementById('tocPanel');
+  const tocOverlay = document.getElementById('tocOverlay');
+  const tocNav     = document.getElementById('tocNav');
+  const tocToggle  = document.getElementById('tocToggle');
+  const tocClose   = document.getElementById('tocClose');
+  let tocOpen = false;
+
+  function openToc() {
+    tocOpen = true;
+    tocPanel.classList.add('open');
+    tocPanel.setAttribute('aria-hidden', 'false');
+    tocOverlay.classList.add('visible');
+    tocToggle.classList.add('toc-active');
+    tocToggle.setAttribute('aria-expanded', 'true');
+  }
+  function closeToc() {
+    tocOpen = false;
+    tocPanel.classList.remove('open');
+    tocPanel.setAttribute('aria-hidden', 'true');
+    tocOverlay.classList.remove('visible');
+    tocToggle.classList.remove('toc-active');
+    tocToggle.setAttribute('aria-expanded', 'false');
+  }
+  function toggleToc() { tocOpen ? closeToc() : openToc(); }
+
+  tocToggle.addEventListener('click', toggleToc);
+  tocClose.addEventListener('click', closeToc);
+  tocOverlay.addEventListener('click', closeToc);
+
+  // Esc 关闭
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && tocOpen) closeToc();
+  });
+
+  /* 构建目录：解析文章内的标题 */
+  function buildToc(contentEl) {
+    const headings = Array.from(
+      contentEl.querySelectorAll('h1, h2, h3, h4')
+    );
+    if (headings.length < 2) {
+      // 标题太少，隐藏目录按钮
+      tocToggle.style.display = 'none';
+      return;
+    }
+
+    // 给每个标题分配 id
+    headings.forEach((h, i) => {
+      if (!h.id) {
+        const slug = h.textContent.trim().replace(/\s+/g, '-').replace(/[^\w\u4e00-\u9fa5-]/g, '');
+        h.id = slug || `toc-heading-${i}`;
+      }
+    });
+
+    // 生成目录项
+    const fragment = document.createDocumentFragment();
+    headings.forEach(h => {
+      const level = parseInt(h.tagName[1]);
+      const a = document.createElement('a');
+      a.className = 'toc-item';
+      a.dataset.level = level;
+      a.textContent = h.textContent.trim();
+      a.href = '#' + h.id;
+      a.addEventListener('click', e => {
+        e.preventDefault();
+        h.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        // 移动端点击后关闭
+        if (window.innerWidth < 1200) closeToc();
+      });
+      fragment.appendChild(a);
+    });
+    tocNav.appendChild(fragment);
+
+    // 滚动高亮当前章节
+    const items = Array.from(tocNav.querySelectorAll('.toc-item'));
+    let spyTimer = null;
+
+    function updateActiveTocItem() {
+      const scrollY = window.scrollY + 80;
+      let activeIdx = 0;
+      headings.forEach((h, i) => {
+        if (h.offsetTop <= scrollY) activeIdx = i;
+      });
+      items.forEach((item, i) => {
+        item.classList.toggle('active', i === activeIdx);
+      });
+      // 把激活项滚入目录视野
+      const activeItem = items[activeIdx];
+      if (activeItem) {
+        activeItem.scrollIntoView({ block: 'nearest' });
+      }
+    }
+
+    window.addEventListener('scroll', () => {
+      clearTimeout(spyTimer);
+      spyTimer = setTimeout(updateActiveTocItem, 60);
+    }, { passive: true });
+
+    updateActiveTocItem();
+
+    // 桌面端自动展开目录
+    if (window.innerWidth >= 1200) openToc();
+  }
+
   /* === 记忆阅读位置 === */
   const POS_KEY  = contentPath ? `readPos_${contentPath}`  : null;
   const TIME_KEY = contentPath ? `readTime_${contentPath}` : null;
@@ -132,6 +236,9 @@
         if (detectPoem(markdown)) {
           content.classList.add('is-poem');
         }
+
+        // 构建目录
+        buildToc(content);
 
         // 还原阅读位置（等待图片等加载后）
         requestAnimationFrame(() => setTimeout(restorePosition, 80));

@@ -5,6 +5,16 @@
   },
   "works": [
     {
+      "id": "jiuge-canjian-rev",
+      "title": "九歌残剑录",
+      "subtitle": "修订版",
+      "category": "novel",
+      "path": "novel/九歌残剑录/修订版/index.md",
+      "excerpt": "残阳如血，泼洒在郢都斑驳的城堞与鳞次栉比的屋瓦之上，将这古老的楚都浸染得一片凄艳。",
+      "updated": "2026-04",
+      "tags": ["玄幻", "历史", "武侠"]
+    },
+    {
       "id": "jiuge-canjian",
       "title": "九歌残剑录",
       "subtitle": "初定版",
