@@ -29,9 +29,9 @@ window.mountGiscus = function() {
   s.async = true;
   s.crossOrigin = 'anonymous';
   s.setAttribute('data-repo', 'ChenyuHeee/literature');
-  s.setAttribute('data-repo-id', 'R_kgDOJkQw6w'); // 仓库 ID（需替换为你的仓库 ID）
-  s.setAttribute('data-category', 'Announcements'); // Discussions 分类名（需替换为你的分类）
-  s.setAttribute('data-category-id', 'DIC_kwDOJkQw684CXYQK'); // 分类 ID（需替换为你的分类 ID）
+  s.setAttribute('data-repo-id', 'R_kgDOSKMIEQ');
+  s.setAttribute('data-category', 'General');
+  s.setAttribute('data-category-id', 'DIC_kwDOSKMIEc4C7muQ');
   s.setAttribute('data-mapping', 'specific');
   s.setAttribute('data-term', getGiscusMapping());
   s.setAttribute('data-reactions-enabled', '1');
