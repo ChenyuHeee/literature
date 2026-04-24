@@ -545,6 +545,35 @@ a { color: inherit; }
 }
 
 /* =========================================
+   阅读页 — 分享 Toast
+   ========================================= */
+.share-toast {
+  position: fixed;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%) translateY(16px);
+  background: var(--text-primary);
+  color: var(--bg);
+  font-family: var(--font-sans);
+  font-size: 0.82rem;
+  padding: 9px 18px;
+  border-radius: 20px;
+  white-space: nowrap;
+  max-width: 90vw;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.22s ease, transform 0.22s ease;
+  z-index: 9999;
+  box-shadow: var(--shadow-lg);
+}
+.share-toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* =========================================
    阅读页 — 目录面板
    ========================================= */
 

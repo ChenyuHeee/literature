@@ -34,6 +34,12 @@
       </button>
       <button class="ctrl-btn" id="fontDecrease" title="缩小字体" aria-label="缩小字体">A-</button>
       <button class="ctrl-btn" id="fontIncrease" title="放大字体" aria-label="放大字体">A+</button>
+      <button class="ctrl-btn" id="shareBtn" title="分享" aria-label="分享本文">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+          <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+        </svg>
+      </button>
       <button class="ctrl-btn" id="themeToggle" title="切换主题" aria-label="切换主题">
         <span class="theme-icon theme-icon-moon">🌙</span>
         <span class="theme-icon theme-icon-sun">☀️</span>
@@ -64,6 +70,9 @@
       </div>
     </article>
   </main>
+
+  <!-- 分享 Toast 提示 -->
+  <div class="share-toast" id="shareToast" aria-live="polite" aria-atomic="true"></div>
 
   <!-- marked.js Markdown 解析器 -->
   <script src="https://cdn.jsdelivr.net/npm/marked@9/marked.min.js"></script>

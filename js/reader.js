@@ -69,6 +69,7 @@
   const tocNav     = document.getElementById('tocNav');
   const tocToggle  = document.getElementById('tocToggle');
   const tocClose   = document.getElementById('tocClose');
+  const TOC_STATE_KEY = 'gmc-toc-open';
   let tocOpen = false;
 
   function openToc() {
@@ -78,6 +79,7 @@
     tocOverlay.classList.add('visible');
     tocToggle.classList.add('toc-active');
     tocToggle.setAttribute('aria-expanded', 'true');
+    if (window.innerWidth >= 1200) localStorage.setItem(TOC_STATE_KEY, '1');
   }
   function closeToc() {
     tocOpen = false;
@@ -86,6 +88,7 @@
     tocOverlay.classList.remove('visible');
     tocToggle.classList.remove('toc-active');
     tocToggle.setAttribute('aria-expanded', 'false');
+    if (window.innerWidth >= 1200) localStorage.setItem(TOC_STATE_KEY, '0');
   }
   function toggleToc() { tocOpen ? closeToc() : openToc(); }
 
@@ -163,8 +166,11 @@
 
     updateActiveTocItem();
 
-    // 桌面端自动展开目录
-    if (window.innerWidth >= 1200) openToc();
+    // 桌面端：恢复上次 TOC 展开状态（默认首次展开）
+    if (window.innerWidth >= 1200) {
+      const saved = localStorage.getItem(TOC_STATE_KEY);
+      if (saved !== '0') openToc(); // 首次或主动展开过则打开
+    }
   }
 
   /* === 记忆阅读位置 === */
@@ -193,6 +199,59 @@
     clearTimeout(saveTimer);
     saveTimer = setTimeout(savePosition, 300);
   }, { passive: true });
+
+  /* === 分享功能 === */
+  const shareBtn  = document.getElementById('shareBtn');
+  const shareToast = document.getElementById('shareToast');
+  let toastTimer = null;
+
+  function showToast(msg) {
+    shareToast.textContent = msg;
+    shareToast.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => shareToast.classList.remove('show'), 2400);
+  }
+
+  async function getShortUrl(longUrl) {
+    try {
+      const res = await fetch(
+        'https://is.gd/create.php?format=json&url=' + encodeURIComponent(longUrl),
+        { mode: 'cors' }
+      );
+      const data = await res.json();
+      return data.shorturl || longUrl;
+    } catch {
+      return longUrl;
+    }
+  }
+
+  shareBtn && shareBtn.addEventListener('click', async () => {
+    const longUrl = location.href;
+    const title   = titleParam;
+
+    // 移动端优先用原生分享
+    if (navigator.share) {
+      try {
+        await navigator.share({ title, url: longUrl });
+        return;
+      } catch {
+        // 用户取消则静默处理
+        return;
+      }
+    }
+
+    // 桌面端：生成短链后复制
+    shareBtn.disabled = true;
+    const short = await getShortUrl(longUrl);
+    shareBtn.disabled = false;
+    try {
+      await navigator.clipboard.writeText(short);
+      showToast('链接已复制 ' + short);
+    } catch {
+      // clipboard 失败则展示短链
+      showToast(short);
+    }
+  });
 
   /* === 加载并渲染 Markdown === */
   function showError(msg) {
