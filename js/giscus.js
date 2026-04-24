@@ -17,9 +17,20 @@ window.mountGiscus = function() {
     return el;
   }
 
-  function getGiscusMapping() {
+  // 根据当前站点主题返回对应的 Giscus 主题
+  function getGiscusTheme() {
+    const dark = document.documentElement.getAttribute('data-theme') === 'dark';
+    return dark ? 'dark_dimmed' : 'light';
+  }
+
+  // 用作 discussion term 的稳定短标识（用 id 或 path 的末段，避免特殊字符过多）
+  function getTerm() {
     const params = new URLSearchParams(window.location.search);
-    return (params.get('path') || location.pathname) + '|' + (params.get('title') || document.title);
+    const id = params.get('id');
+    if (id) return id;                               // 优先用短 id
+    const path = params.get('path') || '';
+    // 取路径末段文件名，去掉扩展名
+    return path.split('/').pop().replace(/\.[^.]+$/, '') || 'index';
   }
 
   const el = getGiscusContainer();
@@ -33,11 +44,22 @@ window.mountGiscus = function() {
   s.setAttribute('data-category', 'General');
   s.setAttribute('data-category-id', 'DIC_kwDOSKMIEc4C7muQ');
   s.setAttribute('data-mapping', 'specific');
-  s.setAttribute('data-term', getGiscusMapping());
+  s.setAttribute('data-term', getTerm());
   s.setAttribute('data-reactions-enabled', '1');
   s.setAttribute('data-emit-metadata', '0');
   s.setAttribute('data-input-position', 'top');
-  s.setAttribute('data-theme', 'preferred_color_scheme');
+  s.setAttribute('data-theme', getGiscusTheme());
   s.setAttribute('data-lang', 'zh-CN');
   el.appendChild(s);
+
+  // 监听站点主题变化，同步更新 Giscus 主题
+  const observer = new MutationObserver(() => {
+    const frame = document.querySelector('iframe.giscus-frame');
+    if (!frame) return;
+    frame.contentWindow.postMessage(
+      { giscus: { setConfig: { theme: getGiscusTheme() } } },
+      'https://giscus.app'
+    );
+  });
+  observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
 };
