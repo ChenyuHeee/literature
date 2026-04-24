@@ -43,14 +43,20 @@
     if (fontSize < FONT_MAX) { fontSize += FONT_STEP; applyFontSize(); }
   });
 
-  /* === 解析 URL 参数 === */
+  /* === 解析 URL 参数（支持 ?id= 和旧版 ?path= 两种格式） === */
   const params = new URLSearchParams(window.location.search);
-  const contentPath = params.get('path');
-  const titleParam  = params.get('title') || '阅读';
+  const idParam   = params.get('id');
+  // 这两个变量在 id 模式下由 content.json 查表后填充
+  let contentPath = params.get('path') || null;
+  let titleParam  = params.get('title') || '阅读';
 
-  /* 更新 <title> 和顶栏标题 */
-  document.title = titleParam + ' — 草木留声';
-  document.getElementById('readerTitle').textContent = titleParam;
+  /* 更新 <title> 和顶栏标题（立即更新，待查表后可能再次更新） */
+  function setTitle(t) {
+    titleParam = t;
+    document.title = t + ' — 草木留声';
+    document.getElementById('readerTitle').textContent = t;
+  }
+  setTitle(titleParam);
 
   /* === 阅读进度条 === */
   const progressBar = document.getElementById('readingProgress');
@@ -174,20 +180,23 @@
   }
 
   /* === 记忆阅读位置 === */
-  const POS_KEY  = contentPath ? `readPos_${contentPath}`  : null;
-  const TIME_KEY = contentPath ? `readTime_${contentPath}` : null;
+  // contentPath 在 id 模式下异步填充，所以用函数动态读取
+  function getPosKey()  { return contentPath ? `readPos_${contentPath}`  : null; }
+  function getTimeKey() { return contentPath ? `readTime_${contentPath}` : null; }
   let saveTimer  = null;
   let didRestore = false;
 
   function savePosition() {
-    if (!POS_KEY) return;
-    localStorage.setItem(POS_KEY, Math.round(window.scrollY));
-    localStorage.setItem(TIME_KEY, Date.now());
+    const k = getPosKey();
+    if (!k) return;
+    localStorage.setItem(k, Math.round(window.scrollY));
+    localStorage.setItem(getTimeKey(), Date.now());
   }
 
   function restorePosition() {
-    if (!POS_KEY || didRestore) return;
-    const saved = localStorage.getItem(POS_KEY);
+    const k = getPosKey();
+    if (!k || didRestore) return;
+    const saved = localStorage.getItem(k);
     if (saved && parseInt(saved) > 80) {
       window.scrollTo({ top: parseInt(saved), behavior: 'instant' });
     }
@@ -271,9 +280,8 @@
     return avg < 20;
   }
 
-  if (!contentPath) {
-    showError('未指定内容路径。');
-  } else {
+  function loadContent() {
+    if (!contentPath) { showError('未指定内容路径。'); return; }
     fetch(contentPath)
       .then(r => {
         if (!r.ok) throw new Error(`HTTP ${r.status}`);
@@ -309,5 +317,24 @@
       .catch(err => {
         showError(`无法加载文件「${contentPath}」。<br><small>${err.message}</small>`);
       });
+  }
+
+  // 若使用 ?id= 参数，先查 content.json 获取 path/title，再加载文章
+  if (idParam) {
+    fetch('content.json')
+      .then(r => r.json())
+      .then(data => {
+        const work = (data.works || []).find(w => w.id === idParam);
+        if (!work) { showError(`找不到 id 为「${idParam}」的作品。`); return; }
+        contentPath = work.path;
+        const displayTitle = work.subtitle
+          ? work.title + '·' + work.subtitle
+          : work.title;
+        setTitle(displayTitle);
+        loadContent();
+      })
+      .catch(() => { showError('无法加载内容列表，请稍后再试。'); });
+  } else {
+    loadContent();
   }
 })();

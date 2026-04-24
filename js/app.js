@@ -29,7 +29,10 @@
 
   /* === 渲染卡片 === */
   function renderCard(work) {
-    const url = `reader.html?path=${encodeURIComponent(work.path)}&title=${encodeURIComponent(work.title)}`;
+    // 优先用短 id 参数；无 id 时降级到 path
+    const url = work.id
+      ? `reader.html?id=${encodeURIComponent(work.id)}`
+      : `reader.html?path=${encodeURIComponent(work.path)}&title=${encodeURIComponent(work.title)}`;
     const tags = (work.tags || []).map(t => `<span class="work-tag">${t}</span>`).join('');
     const badge = CAT_NAME[work.category] || work.category;
     const sub = work.subtitle ? `<div class="work-subtitle">${work.subtitle}</div>` : '';
@@ -66,7 +69,9 @@
     if (!latest) return;
     const banner = document.getElementById('continueReading');
     const titleEl = document.getElementById('continueTitle');
-    const url = `reader.html?path=${encodeURIComponent(latest.path)}&title=${encodeURIComponent(latest.title)}`;
+    const url = latest.id
+      ? `reader.html?id=${encodeURIComponent(latest.id)}`
+      : `reader.html?path=${encodeURIComponent(latest.path)}&title=${encodeURIComponent(latest.title)}`;
     titleEl.textContent = latest.title + (latest.subtitle ? `·${latest.subtitle}` : '');
     banner.href = url;
     banner.style.display = 'flex';
